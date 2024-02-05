@@ -9,22 +9,13 @@ update the README accordingly so that it's clear how to run and test your projec
 be asked to demo your solution and discuss the reasoning behind your implementation decisions and their trade-offs. 
 Be prepared to share your screen for live coding and problem solving with your interviewers based on this discussion.
 
+## Prerequisites
+You will need to have Docker or compatible container tools installed to complete this exercise. You are welcome to use any tools
+you prefer in addition, but make sure to document/automate anything required to run this test when you submit it.
+
 ## Project Description
 
 
-
-Using the provided Python project template, your task is to implement a URL Shortener web service that exposes
-the following API endpoints:
-
-* POST `/url/shorten`: accepts a URL to shorten (e.g. https://www.google.com) and returns a short URL that 
-  can be resolved at a later time (e.g. http://localhost:8000/r/abc)
-* GET `r/<short_url>`: resolve the given short URL (e.g. http://localhost:8000/r/abc) to its original URL
-  (e.g. https://www.google.com). If the short URL is unknown, an HTTP 404 response is returned.
-
-Your solution must support running the URL shortener service with multiple workers.
-
-For example, it should be possible to start two instances of the service, make a request to shorten a URL
-to one instance, and be able to resolve that shortened URL by sending subsequent requests to the second instance. 
 
 ## Getting Started
 
@@ -38,20 +29,18 @@ Then clone your fork to your local machine.
 
 ### Building the Service Container
 
-This repository contains a simple web service and container, described here:
-[a link](https://github.com/pocketzworld/service-orchestration-tech-test/blob/main/service/src/pw/service/README.md)
+This repository contains a simple web service and container, described [here](https://github.com/pocketzworld/service-orchestration-tech-test/blob/main/service/README.md).
 
 The service container can be built using `make build` from the root directory of the test. Feel free to customize existing commands or add new ones as you see fit. You are not required to use the Makefile. The included Dockerfile is sufficient to run this service for the purposes of the test. You are welcome to make changes to support tools you want to use or demonstrate other patterns, but do not add config files or configuration related environment variables to the Dockerfile.
 
 ### Testing
 
-Swagger UI is available as part of the FastAPI framework that can be used to inspect and test
-the API endpoints of the URL shortener. To access it, start run the web service and go to http://localhost:8000/docs
+The service API exposes swagger docs that can be used to inspect and test the API endpoints.
 
 ## Submission Guidelines
 When you have completed the project, please follow these guidelines for submission:
 
-1. Commit and push your code to your GitHub repository.
+1. Commit and push your code to your forked GitHub repository.
 2. Update this README with any additional instructions, notes, or explanations regarding your implementation, if necessary.
 3. Provide clear instructions on how to run and test your project.
 4. Share the repository URL with the hiring team or interviewer.
