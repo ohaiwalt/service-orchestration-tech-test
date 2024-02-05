@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "service"
+version = "0.1.0"
+description = "Simple CRUD web api with redis"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+packages = [
+    { include = "service", from = "src/pw" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.2"
+redis = "^5.0.1"
+uvicorn = "^0.27.0.post1"
+pydantic = "^2.6.1"
+confection = "^0.1.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
