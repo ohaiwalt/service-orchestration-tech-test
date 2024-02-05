@@ -3,11 +3,13 @@ This is a very simple python web app that presents get, set, and delete endpoint
 
 ## Configuration
 This application expects a file called `service.cfg` in the same directory the service is run from. There are only
-two values for connecting to Redis: the host and the port. It looks like this:
-```[redis]
+two values for connecting to Redis: the host and the port. It has this format. like this:
+```
+[redis]
 host = "localhost"
 port = 6379
 ```
+The values of each of those variables may need to change depending on your implementation.
 
 ## API Description
 The service has 4 endpoints.
