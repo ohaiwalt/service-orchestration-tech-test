@@ -17,18 +17,18 @@ you prefer in addition, but make sure to document/automate anything required to 
 
 ## Project Description
 
-Your task is to build appropriate orchestration as code for a deployment of the service and dependent database that could receive 
+Your task is to build appropriate orchestration as code for a deployment of the provided service container and the redis database it connects to that could receive 
 public traffic from users.
 
 If you use a Kubernetes based solution, you do not need to include setting up a K8s cluster. As long as we can apply the 
-code/templates/whatever to any old kube cluster, that is sufficient.
+code/templates to any kube cluster, that is sufficient.
 
 If you use tools specific to a single Cloud provider, use AWS.
 
 From a local development standpoint, docker compose would be a quick way to run and configure the application and Redis, but you would 
 need to additionally design and code hosting the application for public use.
 
-You will only turn in your code. You can test your solution however you want, but we need to load the test in our own infrastructure for review.
+You will only turn in your code. You can test your solution however you want, but we need to load the test in our own infrastructure for review. We will supply our own credentials, and if your solution creates DNS entries, document where to update those so that we can use DNS names we can manage.
 
 ## Getting Started
 
@@ -48,7 +48,7 @@ The service container can be built using `make build` from the root directory of
 
 ### Testing
 
-The service API exposes swagger docs that can be used to inspect and test the API endpoints.
+The service API exposes swagger docs that can be used to inspect and test the API endpoints. Running the container locally with `make run` would make the swagger docs available at `http://localhost:8000/docs`
 
 ## Submission Guidelines
 
