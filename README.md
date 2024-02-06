@@ -20,8 +20,7 @@ you prefer in addition, but make sure to document/automate anything required to 
 Your task is to build appropriate orchestration as code for a deployment of the provided service container and the redis database it connects to that could receive 
 public traffic from users.
 
-If you use a Kubernetes based solution, you do not need to include setting up a K8s cluster. As long as we can apply the 
-code/templates to any kube cluster, that is sufficient.
+If you use a Kubernetes based solution, you do not need to include setting up a K8s cluster. As long as we can apply the code/templates to any kube cluster, that is sufficient. Make sure your code works targeting a fresh kubernetes cluster, minikube installation, etc. You don't need all the bells and whistles for the test, target more of an MVP. There will be time in later interviews to elaborate on how you would approach a more fully featured setup.
 
 If you use tools specific to a single Cloud provider, use AWS.
 
