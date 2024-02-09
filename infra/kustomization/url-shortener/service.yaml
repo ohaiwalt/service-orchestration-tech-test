@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: url-shortener
+    kubernetes.io/name: url-shortener
+  name: mwalter-url-shortener
+spec:
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    k8s-app: url-shortener
+  type: LoadBalancer

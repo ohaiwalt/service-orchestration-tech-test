@@ -69,3 +69,30 @@ ask you to solve an algorithm, but you will be expected to demo your solution an
 
 Good luck, and we look forward to seeing your URL Shortener project! If you have any questions or need
 clarifications, please reach out to us.
+
+## Deploying infrastructure and service applications
+
+Infrastructure setup and application deployments are primarily handled through `make` commands for simplicity's sake given constraints.
+
+Pre-reqs:
+* Kubernetes cluster in AWS
+* Kubernetes cluster nodes have IAM permissions that include ability to read from private ECR repositories (default for EKS nodes)
+* Tools installed and available in PATH:
+    * aws-cli
+    * Helm
+    * kubectl
+    * Terraform
+
+From project root:
+
+1. `make bootstrap`
+2. Copy output of `make show-repo` into `infra/url-shortener/kustomization.yaml` line 21 to replace the image location. Would've preferred to automate this step and make everything a single command, but didn't quite get there.
+3. `make converge` (may take a few minutes for LoadBalancer to provision)
+4. `make test`
+
+For cleanup, from the project root:
+
+1. `make teardown`
+
+## Other thoughts
+

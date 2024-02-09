@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - ../kustomization/url-shortener
+
+namespace: mwalter-url-shortener
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: url-shortener
+      spec:
+        template:
+          spec:
+            containers:
+            - name: url-shortener
+              image: AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/mwalter-test-pw:latest
+
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: url-shortener
+      data:
+        service.cfg: |
+          [redis]
+          host = "mwalter-redis-master.mwalter-redis.svc.cluster.local"
+          port = 6379
+ 
