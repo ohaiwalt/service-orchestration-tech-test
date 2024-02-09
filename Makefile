@@ -33,6 +33,9 @@ create-repo:
 show-repo:
 	@echo $(ecr_image)
 
+show-hostname:
+	@command kubectl get svc -n mwalter-url-shortener mwalter-url-shortener -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+
 bootstrap: check-tools create-repo build-remote push-remote
 
 teardown:
