@@ -77,6 +77,7 @@ Infrastructure setup and application deployments are primarily handled through `
 Pre-reqs:
 * Kubernetes cluster in AWS
 * Kubernetes cluster nodes have IAM permissions that include ability to read from private ECR repositories (default for EKS nodes)
+* Kubernetes cluster can provision EBS volumes for PVCs (not default on EKS nodes without installation of addons, but standard for any functioning cluster)
 * Tools installed and available in PATH:
     * aws-cli
     * Helm
@@ -89,10 +90,33 @@ From project root:
 2. Copy output of `make show-repo` into `infra/url-shortener/kustomization.yaml` line 21 to replace the image location. Would've preferred to automate this step and make everything a single command, but didn't quite get there.
 3. `make converge` (may take a few minutes for LoadBalancer to provision)
 4. `make test`
+5. If desired, run `make show-hostname` (untested, but should work) to grab the endpoint to test in a browser.
 
-For cleanup, from the project root:
+For cleanup, from the project root, this will remove all resources created by this project (and nothing else):
 
 1. `make teardown`
 
-## Other thoughts
+## Testing process
 
+Since I was writing the k8s manifests from scratch, I started with a KIND cluster to have a k8s API to throw them at and see how it ran without costing me money. Similar to minikube, KIND creates a local k8s control plane in Docker containers. This worked as far as testing installing the Redis chart and the url-shortener app manifests, but I wanted to do a LoadBalancer Service to avoid needing to add an Ingress Gateway to the cluster, so I needed to actually move this to AWS. 
+
+I used eksctl to create a default cluster for testing against, customizing no options. I realized once Redis wouldn't schedule that the default EKS cluster didn't include the EBS CSI driver to provision PVCs, so I included that addon. Default cluster also didn't include the OIDC provider, so I had to include the IAM policy for EBS CSI drivers onto the IAM role/instance profile for the cluster node groups. That part I did manually from the console by finding the `AmazonEKS_EBS_CSI_DriverRole` and grabbing its managed policy name.
+
+    eksctl create cluster
+    eksctl create addon --name aws-ebs-csi-driver --cluster $CLUSTER_NAME --service-account-role-arn arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/AmazonEKS_EBS_CSI_DriverRole --force
+
+From there once I had the smoke tests set up, I went through to confirm they were all green (they were not) so I worked through the signal path and logs to determine what was going on, and had to adjust a few settings from default in the Redis chart like turning off authentication and overriding the `Namespace` as the chart uses it in configuration.
+
+## Other thoughts and considerations
+
+Versions of things: I didn't pin any versions or even really reference any specific versions. Obviously that would be something we should do in any production setting, but time constraints.
+
+DNS records and TLS: since the requirement was to make the application publicly accessible, and it's not hosting anything sensitive (even for pretend), I went the expedient route for time constraints and used the AWS Loadbalancer address for the k8s Service instead of setting up either human-friendly records or dealing with creating and terminating TLS certificates for an HTTPS connection. I would want these in production.
+
+Using the Makefile (or similar) as the orchestration layer here makes sense to me for development and testing, or common actions across applications and repositories. It's not how I would approach running this in production, where I would be looking for something that continuously asserts my infrastructure and applications look how I expect them to look. This would be something like a Gitops model with ArgoCD in k8s. Less sophisticated could even look like Jenkins running Terraform on a cron.
+
+I'd want monitoring on my application and its dependencies. Health endpoints, readiness and liveness probes, metrics. I could have rigged something up with the url-shortener, but in the interests of time constraints I'm writing it here instead.
+
+I aimed to keep the code that sets up the infrastructure and application declarative, even if the Makefile orchestration is imperative. There's a few sharp edges here that I'm not a fan of, in particular how Redis is applied via Kustomize but if you look at the Kustomize files there is no indication of where that's coming from other than a small comment of mine. In the Makefile it's pulling the public Helm chart, running it through Helm template, and then Kustomize. I did it that way rather than just Helm to keep a similar interface with the application, for a future case where overriding some part of the rendered chart was necessary. 
+
+I was originally going to use Crossplane.io to create all the AWS resources and forego Terraform altogether, but then realized Crossplane's auth story would have required setting up AWS credentials in a k8s Secret and that felt gross for a takehome assignment. I was aiming for as close to "one button magic" as possible.
